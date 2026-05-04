@@ -2,17 +2,23 @@ package boardgame;
 
 public class Board {
 
-    private int row;
-    private int column;
+    private int rows;
+    private int columns;
     private Piece[][] pieces;
 
-    public Board(int row, int column) {
-        this.row = row;
-        this.column = column;
-        pieces = new Piece[row][column];
+    public Board(int rows, int columns) {
+        if (rows < 1 || columns < 1) {
+            throw new BoardException("Error creating board: there must be at least 1 row and 1 column");
+        }
+        this.rows = rows;
+        this.columns = columns;
+        pieces = new Piece[rows][columns];
     }
 
     public Piece piece(int row, int column) {
+        if(!positionExists(row, column)) {
+            throw new BoardException("Postion not on the board");
+        }
         return pieces[row][column];
     }
 
@@ -21,24 +27,34 @@ public class Board {
     }
 
     public void placePiece(Piece piece, Position position) {
+        if(thereIsAPiece(position)) {
+            throw new BoardException("There is already a piece on the postion: " +position );
+        }
         pieces[position.getRow()][position.getColumn()] = piece;
         piece.position = position;
     }
 
-    public int getRow() {
-        return row;
+    private boolean positionExists(int row, int column) {
+        return row >= 0 && row < rows && column >= 0 && column < columns;
     }
 
-    public void setRow(int row) {
-        this.row = row;
+    public boolean positionExists(Position position) {
+        return positionExists(position.getRow(), position.getColumn());
     }
 
-    public int getColumn() {
-        return column;
+    public boolean thereIsAPiece(Position position) {
+        if(thereIsAPiece(position)) {
+            throw new BoardException("There is already a piece on the postion: " +position );
+        }
+        return piece(position) != null;
     }
 
-    public void setColumn(int column) {
-        this.column = column;
+    public int getRows() {
+        return rows;
+    }
+
+    public int getColumns() {
+        return columns;
     }
     
 }
